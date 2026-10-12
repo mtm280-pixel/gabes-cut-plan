@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<title>Gabe's Program</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --bg:#f8f7f4; --surface:#ffffff; --surface-2:#f0eee9;
+    --ink:#121210; --ink-soft:#57534b; --ink-faint:#79746b;
+    --line:#e2ded7; --accent:#b58330; --accent-ink:#6d4d18; --accent-soft:#f5e6c8;
+    --good:#2f6b4f; --good-soft:#eef4ef; --warn:#6d4d18; --warn-soft:#fbf4e6;
+    --gold:#b8912a;
+    --shadow: 0 1px 2px rgba(18,18,16,0.04), 0 8px 24px -12px rgba(18,18,16,0.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#17181a; --surface:#201f1d; --surface-2:#262421;
+      --ink:#ece9e3; --ink-soft:#b7b4ac; --ink-faint:#8f8b80;
+      --line:#38362f; --accent:#d9a94c; --accent-ink:#e8c171; --accent-soft:#332a16;
+      --good:#5fcb9c; --good-soft:#1c3129; --warn:#e8c171; --warn-soft:#332a16;
+      --gold:#d4af5a;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#17181a; --surface:#201f1d; --surface-2:#262421;
+    --ink:#ece9e3; --ink-soft:#b7b4ac; --ink-faint:#8f8b80;
+    --line:#38362f; --accent:#d9a94c; --accent-ink:#e8c171; --accent-soft:#332a16;
+    --good:#5fcb9c; --good-soft:#1c3129; --warn:#e8c171; --warn-soft:#332a16;
+    --gold:#d4af5a;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{background:var(--bg);color:var(--ink);font-family:'Jost',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.55;}
+  .wrap{max-width:700px;margin:0 auto;padding:48px 22px 90px;}
+  .display{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;letter-spacing:-0.01em;}
+  .tabular{font-variant-numeric:tabular-nums;}
+
+  .brand{display:inline-flex;align-items:baseline;gap:9px;margin-bottom:24px;}
+  .brand .mark{position:relative;display:inline-block;font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-weight:500;font-size:25px;line-height:1;color:var(--gold);}
+  .brand .mark .slash{position:absolute;left:-12%;top:50%;height:1px;width:124%;transform-origin:center;transform:rotate(-27deg);background:currentColor;}
+  .brand .word{font-size:12px;font-weight:600;letter-spacing:0.28em;text-transform:uppercase;color:var(--ink);}
+
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent-ink);}
+  h1.title{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;letter-spacing:-0.015em;font-size:clamp(38px,8.5vw,56px);line-height:0.95;margin:10px 0 14px;text-wrap:balance;}
+  .lede{font-size:16.5px;color:var(--ink-soft);max-width:56ch;}
+
+  section{margin-top:48px;}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px;}
+  .sec-no{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:15px;color:var(--ink-faint);letter-spacing:0.05em;}
+  h2{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:27px;letter-spacing:0.02em;margin:0;}
+  h3{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:17px;letter-spacing:0.03em;margin:0;color:var(--ink);}
+  p{margin:0 0 12px;color:var(--ink-soft);}
+  p.tight{margin-bottom:0;}
+  strong{color:var(--ink);}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0;box-shadow:var(--shadow);}
+  .card .card-title{font-weight:700;color:var(--ink);margin-bottom:4px;font-size:14px;}
+  .card.accent{border-left:4px solid var(--accent);border-radius:4px 14px 14px 4px;}
+  .card.warn{background:var(--warn-soft);border-color:var(--warn);}
+  .card.good{background:var(--good-soft);border-color:var(--good);}
+
+  /* general rule chips */
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin:14px 0;}
+  .rule-tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px;box-shadow:var(--shadow);}
+  .rule-tile .num{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:21px;color:var(--accent-ink);line-height:1;}
+  .rule-tile .lbl{font-size:11px;color:var(--ink-faint);margin-top:4px;}
+
+  /* day cards (training split) */
+  .day-grid{display:flex;flex-direction:column;gap:12px;margin:14px 0;}
+  .day-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);}
+  .day-head{padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--line);}
+  .day-head .d-no{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:10.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-faint);}
+  .ex-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .ex-table td{padding:9px 16px;border-top:1px solid var(--line);color:var(--ink-soft);}
+  .ex-table tr:first-child td{border-top:none;}
+  .ex-table td:first-child{color:var(--ink);font-weight:600;width:64%;}
+  .ex-table td:last-child{text-align:right;color:var(--ink-faint);}
+  .ex-note{font-size:11.5px;color:var(--ink-faint);display:block;margin-top:1px;font-weight:400;}
+  .core-row{padding:9px 16px;font-size:12px;color:var(--ink-faint);border-top:1px dashed var(--line);}
+
+  /* big stat callout */
+  .stat-row{display:flex;gap:10px;margin:14px 0;flex-wrap:wrap;}
+  .stat-box{flex:1;min-width:130px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow);text-align:center;}
+  .stat-box .big{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:36px;color:var(--accent);line-height:1;}
+  .stat-box .lbl{font-size:12px;color:var(--ink-faint);margin-top:4px;}
+
+  /* meal window */
+  .window-track{display:flex;align-items:center;gap:0;margin:14px 0 6px;border-radius:999px;overflow:hidden;height:30px;border:1px solid var(--line);}
+  .window-seg{height:100%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;}
+  .seg-fast{background:var(--surface-2);color:var(--ink-faint);flex:14;}
+  .seg-eat{background:var(--accent-soft);color:var(--accent-ink);flex:8;}
+  .window-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-faint);margin-bottom:14px;}
+
+  /* example day cards */
+  .eatday{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);margin:14px 0;}
+  .eatday-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:var(--surface-2);border-bottom:1px solid var(--line);}
+  .eatday-head h3{font-size:18px;}
+  .eatday-tag{font-size:10.5px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent-soft);border-radius:999px;padding:4px 10px;}
+  .meal-block{padding:14px 18px;border-top:1px solid var(--line);}
+  .meal-block:first-of-type{border-top:none;}
+  .meal-block .m-title{font-weight:700;color:var(--ink);font-size:13.5px;margin-bottom:6px;}
+  .meal-block ul{margin:0 0 8px;padding-left:18px;color:var(--ink-soft);font-size:13.5px;}
+  .meal-block li{margin-bottom:2px;}
+  .meal-macros{display:flex;gap:14px;font-size:12px;color:var(--ink-faint);}
+  .meal-macros b{color:var(--ink);font-weight:700;}
+  .eatday-total{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;background:var(--surface-2);border-top:1px solid var(--line);}
+  .eatday-total .tot-lbl{font-size:12.5px;color:var(--ink-soft);font-weight:600;}
+  .eatday-total .tot-val{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:20px;color:var(--accent);}
+
+  /* math formula */
+  .formula{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:4px 14px 14px 4px;padding:16px 18px;margin:14px 0;box-shadow:var(--shadow);}
+  .formula .eq{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:19px;letter-spacing:0.01em;color:var(--ink);}
+  .formula .eq .op{color:var(--ink-faint);margin:0 7px;}
+  .formula .result{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .formula .result .lbl{font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-faint);}
+  .formula .result .range{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:24px;color:var(--good);}
+
+  /* treat table */
+  /* recipe cards */
+  .recipe{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow);margin:14px 0;}
+  .recipe-head{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;background:var(--surface-2);border-bottom:1px solid var(--line);}
+  .recipe-head h3{font-size:18px;}
+  .recipe-tag{font-size:10.5px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;border-radius:999px;padding:4px 10px;white-space:nowrap;}
+  .recipe-tag.exact{background:var(--good-soft);color:var(--good);}
+  .recipe-tag.approx{background:var(--warn-soft);color:var(--warn);}
+  .ing-list{padding:6px 18px;}
+  .ing-row{display:flex;align-items:center;gap:11px;padding:8px 0;border-top:1px solid var(--line);}
+  .ing-row:first-child{border-top:none;}
+  .ing-dot{width:11px;height:11px;border-radius:50%;flex:none;}
+  .ing-dot.carb{background:#c99a4e;}
+  .ing-dot.protein{background:#b8503c;}
+  .ing-dot.dairy{background:#e0c04a;}
+  .ing-dot.sauce{background:var(--accent);}
+  .ing-dot.other{background:var(--good);}
+  .ing-name{flex:1;font-size:13.5px;color:var(--ink);font-weight:500;}
+  .ing-cal{font-size:12.5px;color:var(--ink-faint);flex:none;text-align:right;}
+  .ing-cal .p{color:var(--accent-ink);font-weight:600;}
+  .recipe-method{padding:10px 18px;font-size:12.5px;color:var(--ink-faint);border-top:1px dashed var(--line);}
+  .recipe-total{display:flex;flex-direction:column;gap:3px;padding:13px 18px;background:var(--surface-2);border-top:1px solid var(--line);}
+  .recipe-total .rt-row{display:flex;justify-content:space-between;align-items:center;}
+  .recipe-total .rt-lbl{font-size:12px;color:var(--ink-soft);font-weight:600;}
+  .recipe-total .rt-val{font-family:'Bodoni Moda',Didot,'Bodoni 72',Georgia,serif;font-size:19px;color:var(--accent);}
+  .recipe-total .rt-sub{font-size:11.5px;color:var(--ink-faint);}
+
+  .treat-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+  .treat-table th{text-align:left;font-size:10px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);font-weight:700;padding:0 12px 7px;}
+  .treat-table td{background:var(--surface);padding:11px 12px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top;}
+  .treat-table td:first-child{border-left:1px solid var(--line);border-radius:10px 0 0 10px;font-weight:700;color:var(--ink);}
+  .treat-table td:last-child{border-right:1px solid var(--line);border-radius:0 10px 10px 0;}
+  .treat-table tr + tr td{border-top:none;}
+  .status{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;border-radius:999px;padding:3px 7px;white-space:nowrap;}
+  .status.known{background:var(--good-soft);color:var(--good);}
+  .status.needed{background:var(--warn-soft);color:var(--warn);}
+
+  ul.check{list-style:none;margin:14px 0;padding:0;display:flex;flex-direction:column;gap:10px;}
+  ul.check li{display:flex;gap:10px;align-items:flex-start;color:var(--ink-soft);font-size:14.5px;}
+  ul.check li svg{flex:none;margin-top:3px;}
+  ul.check li b{color:var(--ink);}
+
+  hr.div{border:none;border-top:1px solid var(--line);margin:48px 0 0;}
+  footer{margin-top:36px;padding-top:18px;color:var(--ink-faint);font-size:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+</style>
+
+<div class="wrap">
+
+  <div class="brand" aria-label="MeekFit">
+    <span class="mark">MF<span class="slash" aria-hidden="true"></span></span>
+    <span class="word">MeekFit</span>
+  </div>
+
+  <div class="eyebrow">Gabe &middot; Custom Coaching</div>
+  <h1 class="title display">THE<br>PROGRAM</h1>
+  <p class="lede">The split you already run, cleaned up with real progression. Your actual numbers. Two example days built from food you already eat. And exactly how many drinks fit in a week &mdash; with the math, not a guess.</p>
+
+  <!-- 01 split -->
+  <section>
+    <div class="sec-head"><span class="sec-no">01</span><h2>The Split</h2></div>
+
+    <div class="rules">
+      <div class="rule-tile"><div class="num">8&ndash;10</div><div class="lbl">Reps per set</div></div>
+      <div class="rule-tile"><div class="num">3&ndash;4</div><div class="lbl">Sets per exercise</div></div>
+      <div class="rule-tile"><div class="num">4&ndash;5</div><div class="lbl">Days per week</div></div>
+      <div class="rule-tile"><div class="num">&uarr;</div><div class="lbl">Add weight when it gets easy</div></div>
+    </div>
+
+    <div class="day-grid">
+      <div class="day-card">
+        <div class="day-head"><div class="d-no">Day 1</div><h3>Chest / Triceps</h3></div>
+        <table class="ex-table">
+          <tr><td>Bench press <span class="ex-note">or machine chest press</span></td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>Incline dumbbell press</td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>Chest flys <span class="ex-note">machine or cable</span></td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>Tricep pushdowns</td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+        </table>
+      </div>
+
+      <div class="day-card">
+        <div class="day-head"><div class="d-no">Day 2</div><h3>Back / Biceps</h3></div>
+        <table class="ex-table">
+          <tr><td>Lat pulldown</td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>DB rows <span class="ex-note">or machine rows</span></td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>5-sec tempo bicep work</td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>Slow release curls <span class="ex-note">7-sec lowering</span></td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+        </table>
+      </div>
+
+      <div class="day-card">
+        <div class="day-head"><div class="d-no">Day 3</div><h3>Legs / Shoulders</h3></div>
+        <table class="ex-table">
+          <tr><td>Squats <span class="ex-note">or leg press</span></td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>Hamstring curl</td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>Leg extensions</td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>Shoulder press</td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>Dumbbell shrugs</td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+          <tr><td>Lateral raises</td><td>3&ndash;4 &times; 8&ndash;10</td></tr>
+        </table>
+        <div class="core-row">+ Optional core: cable crunches or hanging leg raises, any day</div>
+      </div>
+    </div>
+    <p class="tight">4th day: repeat whichever felt weakest that week. 5th, if you want it: core + arms, light.</p>
+  </section>
+
+  <!-- 02 numbers -->
+  <section>
+    <div class="sec-head"><span class="sec-no">02</span><h2>Your Numbers</h2></div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="big tabular">1,700</div><div class="lbl">Calories / day</div></div>
+      <div class="stat-box"><div class="big tabular">~145g</div><div class="lbl">Protein / day</div></div>
+      <div class="stat-box"><div class="big tabular">2</div><div class="lbl">Meals / day</div></div>
+    </div>
+
+    <div class="window-track">
+      <div class="window-seg seg-fast">Fasted</div>
+      <div class="window-seg seg-eat">Eating window</div>
+    </div>
+    <div class="window-labels"><span>Wake</span><span>~2&ndash;3pm</span><span>~10pm</span></div>
+    <p class="tight">1,700 is already the realistic number &mdash; it has room for normal weekend drinking built in, not a strict number you're failing every time you have a drink.</p>
+  </section>
+
+  <!-- 03 example days -->
+  <section>
+    <div class="sec-head"><span class="sec-no">03</span><h2>Example Days</h2></div>
+    <p>Both hit ~1,700 cal using food already on your list, plus a few easy additions. Swap items for anything similar &mdash; these are templates, not a script.</p>
+
+    <div class="eatday">
+      <div class="eatday-head"><h3 class="display">Standard Day</h3><span class="eatday-tag">No drinks</span></div>
+      <div class="meal-block">
+        <div class="m-title">Meal 1 &mdash; ~2-3pm, pre-workout (breaks the fast)</div>
+        <ul>
+          <li>3 whole eggs + 3 egg whites</li>
+          <li>1 can sardines</li>
+          <li>&frac12; cup dry oats + 1 tbsp honey <span class="ex-note" style="display:inline;">&larr; the carb load, timed to fuel the lift</span></li>
+          <li>1 cup mixed berries</li>
+        </ul>
+        <div class="meal-macros"><span><b>725</b> cal</span><span><b>57g</b> protein</span><span><b>60g</b> carb</span><span><b>29g</b> fat</span></div>
+      </div>
+      <div class="meal-block">
+        <div class="m-title">Meal 2 &mdash; evening / post-workout</div>
+        <ul>
+          <li>6oz chicken breast</li>
+          <li>4oz 93/7 ground beef</li>
+          <li>1 cup cooked rice</li>
+          <li>&frac12; avocado</li>
+          <li>2 cups mixed veggies</li>
+          <li>1 green apple</li>
+        </ul>
+        <div class="meal-macros"><span><b>970</b> cal</span><span><b>88g</b> protein</span><span><b>89g</b> carb</span><span><b>29g</b> fat</span></div>
+      </div>
+      <div class="eatday-total"><span class="tot-lbl">Day total</span><span class="tot-val tabular">~1,695 cal &middot; 145g protein</span></div>
+    </div>
+
+    <div class="eatday">
+      <div class="eatday-head"><h3 class="display">Weekend Night</h3><span class="eatday-tag">~10 drinks built in</span></div>
+      <div class="meal-block">
+        <div class="m-title">Meal 1 &mdash; ~2-3pm, pre-workout</div>
+        <ul>
+          <li>3 whole eggs + 3 egg whites</li>
+          <li>&frac12; cup dry oats + 1 tbsp honey <span class="ex-note" style="display:inline;">&larr; the carb load, timed to fuel the lift</span></li>
+        </ul>
+        <div class="meal-macros"><span><b>475</b> cal</span><span><b>34g</b> protein</span><span><b>46g</b> carb</span><span><b>18g</b> fat</span></div>
+      </div>
+      <div class="meal-block">
+        <div class="m-title">Meal 2 &mdash; lighter, makes room for drinks later</div>
+        <ul>
+          <li>6oz chicken breast</li>
+          <li>2 cups mixed veggies</li>
+        </ul>
+        <div class="meal-macros"><span><b>330</b> cal</span><span><b>57g</b> protein</span><span><b>10g</b> carb</span><span><b>6g</b> fat</span></div>
+      </div>
+      <div class="meal-block">
+        <div class="m-title">Tequila &mdash; 10 shots</div>
+        <div class="meal-macros"><span><b>~970</b> cal</span><span>negligible carb / protein / fat</span></div>
+      </div>
+      <div class="eatday-total"><span class="tot-lbl">Day total</span><span class="tot-val tabular">~1,775 cal &middot; 91g protein</span></div>
+    </div>
+    <p class="tight">Protein's lower on a night like this, and the total runs a little over 1,700 &mdash; that's the real tradeoff for leaning into one bigger night, not a mistake. The other night that weekend stays lighter on drinks to land at the weekly ceiling below.</p>
+
+    <h3 style="margin:28px 0 4px;">Go-To Recipes</h3>
+    <p class="tight">Yours, built out with real numbers. Branded-ingredient values are close estimates &mdash; worth a quick label-check the first time you make these, then they're locked in for good.</p>
+
+    <div class="recipe">
+      <div class="recipe-head"><h3 class="display">High-Protein Pizza</h3><span class="recipe-tag exact">Exact</span></div>
+      <div class="ing-list">
+        <div class="ing-row"><span class="ing-dot carb"></span><span class="ing-name">2 Joseph's lavash flatbreads</span><span class="ing-cal tabular">240 cal <span class="p">12g P</span></span></div>
+        <div class="ing-row"><span class="ing-dot sauce"></span><span class="ing-name">&frac12; cup Classico roasted garlic sauce</span><span class="ing-cal tabular">60 cal <span class="p">2g P</span></span></div>
+        <div class="ing-row"><span class="ing-dot other"></span><span class="ing-name">Garlic salt, light sprinkle</span><span class="ing-cal tabular">~0 cal</span></div>
+        <div class="ing-row"><span class="ing-dot dairy"></span><span class="ing-name">&frac12; cup Tillamook low-moisture mozzarella</span><span class="ing-cal tabular">160 cal <span class="p">12g P</span></span></div>
+        <div class="ing-row"><span class="ing-dot protein"></span><span class="ing-name">34 Boar's Head turkey pepperoni slices</span><span class="ing-cal tabular">140 cal <span class="p">20g P</span></span></div>
+        <div class="ing-row"><span class="ing-dot sauce"></span><span class="ing-name">4 tbsp Frank's mild buffalo sauce (base)</span><span class="ing-cal tabular">~5 cal</span></div>
+      </div>
+      <div class="recipe-method">Lavash alone, 350&deg; for 4 min &rarr; add toppings &rarr; broil (or 350&deg;) until browned. Finish with a drizzle of buffalo + the ranch below.</div>
+      <div class="recipe-total">
+        <div class="rt-row"><span class="rt-lbl">Whole pizza</span></div>
+        <div class="meal-macros"><span><b>600</b> cal</span><span><b>46g</b> protein</span><span><b>51g</b> carb</span><span><b>25g</b> fat</span></div>
+        <div class="rt-sub" style="margin-top:4px;">Cut into 4 &mdash; per slice:</div>
+        <div class="meal-macros"><span><b>150</b> cal</span><span><b>12g</b> protein</span><span><b>13g</b> carb</span><span><b>6g</b> fat</span></div>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="recipe-head"><h3 class="display">High-Protein Burger</h3><span class="recipe-tag approx">~Estimated</span></div>
+      <div class="ing-list">
+        <div class="ing-row"><span class="ing-dot protein"></span><span class="ing-name">&frac12; lb Lauretta's 92/8 ground beef</span><span class="ing-cal tabular">~380 cal <span class="p">48g P</span></span></div>
+        <div class="ing-row"><span class="ing-dot carb"></span><span class="ing-name">2 Nature's Own keto buns</span><span class="ing-cal tabular">~130 cal <span class="p">10g P</span></span></div>
+        <div class="ing-row"><span class="ing-dot protein"></span><span class="ing-name">2 slices Godshall's beef bacon <em>(optional)</em></span><span class="ing-cal tabular">~55 cal <span class="p">6g P</span></span></div>
+        <div class="ing-row"><span class="ing-dot dairy"></span><span class="ing-name">Cheese, your choice (1 slice)</span><span class="ing-cal tabular">~50 cal <span class="p">5g P</span></span></div>
+      </div>
+      <div class="recipe-method">Makes 2 burgers. Swap cheese for whatever's on hand &mdash; just use that package's label for the exact number.</div>
+      <div class="recipe-total">
+        <div class="rt-row"><span class="rt-lbl">Whole batch</span></div>
+        <div class="meal-macros"><span><b>615</b> cal</span><span><b>69g</b> protein</span><span><b>21g</b> carb</span><span><b>31g</b> fat</span></div>
+        <div class="rt-sub" style="margin-top:4px;">Per burger:</div>
+        <div class="meal-macros"><span><b>310</b> cal</span><span><b>35g</b> protein</span><span><b>11g</b> carb</span><span><b>16g</b> fat</span></div>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="recipe-head"><h3 class="display">High-Protein Ranch</h3><span class="recipe-tag exact">Exact &mdash; already tracked</span></div>
+      <div class="ing-list">
+        <div class="ing-row"><span class="ing-dot dairy"></span><span class="ing-name">25g fat-free mayo</span></div>
+        <div class="ing-row"><span class="ing-dot dairy"></span><span class="ing-name">180g light Greek yoghurt</span></div>
+        <div class="ing-row"><span class="ing-dot other"></span><span class="ing-name">15g ranch seasoning <em>(onion, garlic powder, salt &amp; pepper, coriander)</em></span></div>
+        <div class="ing-row"><span class="ing-dot other"></span><span class="ing-name">15g dill + fresh lemon juice</span></div>
+      </div>
+      <div class="recipe-method">Mix everything together. Skip the 30ml skim milk unless it needs thinning out.</div>
+      <div class="recipe-total">
+        <div class="rt-row"><span class="rt-lbl">Whole batch</span></div>
+        <div class="meal-macros"><span><b>142</b> cal</span><span><b>20g</b> protein</span><span><b>13g</b> carb</span><span><b>1g</b> fat</span></div>
+        <div class="rt-sub" style="margin-top:4px;">Per tbsp drizzle (~15g): ~9 cal &middot; 1.3g protein &mdash; basically free on top of anything above</div>
+      </div>
+    </div>
+
+    <table class="treat-table">
+      <thead><tr><th>Still open</th><th>Fits as</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Ninja Creami protein "ice cream"</td>
+          <td>Low-cal dessert finisher &mdash; depends on the recipe used.</td>
+          <td><span class="status needed">Needs recipe</span></td>
+        </tr>
+        <tr>
+          <td>Lesser Evil popcorn</td>
+          <td>~120&ndash;150 cal/serving, varies by flavor.</td>
+          <td><span class="status needed">Confirm bag</span></td>
+        </tr>
+        <tr>
+          <td>"Drizzlicuos"</td>
+          <td>Couldn't confidently identify this product.</td>
+          <td><span class="status needed">Need ID</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 04 drink math -->
+  <section>
+    <div class="sec-head"><span class="sec-no">04</span><h2>The Weekly Drink Math</h2></div>
+    <p>Here's the part worth understanding: drinking on the weekend doesn't add calories on top of the plan &mdash; it swaps some of that day's food for alcohol instead. Stay at 1,700 total either way, and the week adds up exactly the same:</p>
+
+    <div class="formula">
+      <div class="eq tabular">1,700 <span class="op">&times;</span> 7 <span class="op">days</span></div>
+      <div class="result">
+        <span class="lbl">Same either way</span>
+        <span class="range tabular">11,900 cal/wk</span>
+      </div>
+    </div>
+
+    <p>Protein still needs real food behind it though, so food calories on any day &mdash; drinking or not &mdash; shouldn't drop below about <strong>1,500</strong>. That floor is what actually sets how much room is left for alcohol:</p>
+
+    <div class="formula">
+      <div class="eq tabular">1,700 <span class="op">&minus;</span> 1,500 <span class="op">=</span> 200<span class="op">/day room</span></div>
+      <div class="result">
+        <span class="lbl">&times; 7 days</span>
+        <span class="range tabular">1,400 cal/wk</span>
+      </div>
+    </div>
+    <div class="formula">
+      <div class="eq tabular">1,400 <span class="op">&divide;</span> 97<span class="op">cal/shot</span></div>
+      <div class="result">
+        <span class="lbl">&asymp;</span>
+        <span class="range tabular">15 drinks / week</span>
+      </div>
+    </div>
+    <p class="tight">That 15 doesn't have to split evenly &mdash; the example above leans 10 into one night, which only leaves about 5 for the other to stay at the same weekly ceiling. Stay close to on-plan the other 5 days and the drinking isn't something to stress over, it's already priced in. Beer and mixed drinks run higher than a plain shot, so the count drops if that's what you're actually having.</p>
+  </section>
+
+  <!-- 05 slip up -->
+  <section>
+    <div class="sec-head"><span class="sec-no">05</span><h2>If You Slip Up</h2></div>
+    <div class="card good">
+      <div class="card-title">No panic, no crash day</div>
+      <p class="tight">Went over one night? Don't try to fix it in a single day. Drop intake by <strong>50&ndash;150 calories/day</strong> across the rest of the week until it's made up. A 400-calorie overshoot is only about 60/day spread across the next week &mdash; barely noticeable, and it protects the muscle you're trying to keep.</p>
+    </div>
+  </section>
+
+  <!-- 06 support -->
+  <section>
+    <div class="sec-head"><span class="sec-no">06</span><h2>How Support Works</h2></div>
+    <ul class="check">
+      <li>
+        <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8.5" fill="none" stroke="var(--accent)" stroke-width="1.5"/><path d="M5 9.5l2.5 2.5L13 6.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><b>24/7, real-time.</b> You track, I'm the person you ping when deciding something in the moment &mdash; not a scheduled check-in.</span>
+      </li>
+      <li>
+        <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="8.5" fill="none" stroke="var(--accent)" stroke-width="1.5"/><path d="M5 9.5l2.5 2.5L13 6.5" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span><b>This page stays current.</b> As more recipes and exact macros come in, the "Still open" list above gets filled in.</span>
+      </li>
+    </ul>
+  </section>
+
+  <hr class="div">
+  <footer>
+    <span>1,700 cal/day &middot; ~145g protein &middot; 2 meals</span>
+    <span>~15 drinks/week, spread out</span>
+  </footer>
+
+</div>
